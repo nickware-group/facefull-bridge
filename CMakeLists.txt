@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
-project(facefull-bridge VERSION 1.0.2 DESCRIPTION "Facefull bridge library")
+project(facefull-bridge VERSION 1.0.3 DESCRIPTION "Facefull bridge library")
 
 set(CMAKE_CXX_STANDARD 14)
 
@@ -44,7 +44,7 @@ build_ffb(shared)
 build_ffb(static)
 
 if (NOT DEFINED INSTALL_DIR)
-    set(INSTALL_DIR ${CMAKE_SOURCE_DIR}/dist)
+    set(INSTALL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/dist)
 endif ()
 
 if (WIN32)
@@ -57,13 +57,13 @@ install(TARGETS ${PROJECT_NAME}_static ARCHIVE DESTINATION ${INSTALL_DIR}/lib NA
 install(DIRECTORY include DESTINATION ${INSTALL_DIR})
 
 if (FFB_WXWIDGETS_EXAMPLE_BUILD OR FFB_QT5WEBKIT_EXAMPLE_BUILD OR FFB_WB_EXAMPLE_BUILD)
-    install(DIRECTORY examples/ui/ DESTINATION ${INSTALL_DIR}/ui)
+    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/examples/ui/ DESTINATION ${INSTALL_DIR}/ui)
 
     add_custom_command(
             TARGET ${PROJECT_NAME} PRE_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_directory
-            ${CMAKE_SOURCE_DIR}/deps/facefull/dist/
-            ${CMAKE_SOURCE_DIR}/examples/ui/facefull
+            ${CMAKE_CURRENT_SOURCE_DIR}/deps/facefull/dist/
+            ${CMAKE_CURRENT_SOURCE_DIR}/examples/ui/facefull
             COMMENT "Copy Facefull frontend library files"
     )
 
