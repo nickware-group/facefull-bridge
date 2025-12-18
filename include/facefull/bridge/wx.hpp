@@ -20,7 +20,7 @@ class FacefullBridgeWx : public FacefullBridgeInterface {
 private:
     wxWebView *WebView;
     wxFrame *Frame;
-    wxRect WindowSize;
+    wxSize WindowSize;
     wxPoint WindowPosition;
     wxPoint PointerPosition;
     wxTimer *WindowTimer;
@@ -28,6 +28,7 @@ private:
     bool CaptureFlag;
     bool PreventDefaultHandlerWindowReady;
     bool PreventDefaultHandlerWindowClose;
+    bool Maximized = false;
 
     void WebViewCommandExecutor(const std::string &str) override {
         wxCommandEvent event(wxEVT_COMMAND_ENTER);
@@ -41,7 +42,7 @@ private:
 
     void doMoveWindow(wxMouseEvent &evt) {
         if (!evt.Dragging()) {
-            WebView -> ReleaseMouse();
+            if (WebView) WebView -> ReleaseMouse();
             CaptureFlag = false;
         } else {
             wxPoint p;
@@ -59,28 +60,14 @@ private:
 
     void doWindowPosReset(wxTimerEvent&) {
         Frame -> SetPosition(WindowPosition);
+        Frame -> SetClientSize(WindowSize);
     }
 
     void onWindowMaximize() override {
-        if (!isMaximized()) {
-            wxDisplay display;
-            WindowPosition = Frame -> GetScreenPosition();
-            WindowSize = Frame -> GetClientRect();
-#ifdef __WIN32__
-            APPBARDATA abd;
-            abd.cbSize = sizeof(APPBARDATA);
-            SHAppBarMessage(ABM_GETTASKBARPOS, &abd);
-            if (!abd.rc.top && abd.rc.bottom-abd.rc.top < 256) Frame -> SetPosition(wxPoint(0, abd.rc.bottom));
-            else if (!abd.rc.left && abd.rc.bottom-abd.rc.top > 256) Frame -> SetPosition(wxPoint(abd.rc.right, 0));
-            else
-#endif
-            Frame -> SetPosition(wxPoint(0, 0));
-            Frame -> Maximize();
-            Frame -> SetClientSize(display.GetClientArea());
+        if (!Maximized) {
+            doWindowMaximize();
         } else {
-            Frame -> Maximize(false);
-            WindowTimer -> StartOnce(1);
-            Frame -> SetClientSize(WindowSize);
+            doWindowRestore();
         }
     }
 
@@ -94,7 +81,7 @@ private:
 
     void onWindowMove() override {
         if (isMaximized()) return;
-        WebView -> CaptureMouse();
+        if (WebView) WebView -> CaptureMouse();
     }
 
     void onWindowReady() override {
@@ -132,6 +119,36 @@ public:
         WebView -> LoadURL(window);
     }
 
+    void doWindowMaximizeSizeReset() {
+        wxDisplay display(Frame->GetMainWindowOfCompositeControl());
+        Frame -> SetClientSize(wxSize(display.GetClientArea().width, display.GetClientArea().height));
+    }
+
+    void doWindowMaximize() {
+        Maximized = true;
+        wxDisplay display(Frame->GetMainWindowOfCompositeControl());
+        WindowPosition = Frame -> GetScreenPosition();
+        WindowSize = Frame -> GetClientSize();
+
+#ifdef __WIN32__
+        APPBARDATA abd;
+        abd.cbSize = sizeof(APPBARDATA);
+        SHAppBarMessage(ABM_GETTASKBARPOS, &abd);
+        if (!abd.rc.top && abd.rc.bottom-abd.rc.top < 256) Frame -> SetPosition(wxPoint(display.GetClientArea().x, abd.rc.bottom+display.GetClientArea().y));
+        else if (!abd.rc.left && abd.rc.bottom-abd.rc.top > 256) Frame -> SetPosition(wxPoint(abd.rc.right+display.GetClientArea().x, display.GetClientArea().y));
+        else
+#endif
+        Frame -> SetPosition(wxPoint(display.GetClientArea().x, display.GetClientArea().y));
+        Frame -> Maximize();
+        doWindowMaximizeSizeReset();
+    }
+
+    void doWindowRestore() {
+        Frame -> Maximize(false);
+        WindowTimer -> StartOnce(1);
+        Maximized = false;
+    }
+
     void setWebView(wxWebView *webview) {
         WebView = webview;
         if (webview) {
@@ -151,7 +168,7 @@ public:
     }
 
     bool isMaximized() {
-        return Frame->IsMaximized();
+        return Maximized;
     }
 
     ~FacefullBridgeWx() {
