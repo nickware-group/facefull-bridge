@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Name:
 // Purpose:
-// Author:      Nickolay Babbysh
+// Author:      Nickolay Babich
 // Created:     02.10.2021
 // Copyright:   (c) NickWare Group
 // Licence:     MIT licence

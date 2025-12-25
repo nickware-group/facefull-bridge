@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
-project(facefull-bridge VERSION 1.0.3 DESCRIPTION "Facefull bridge library")
+project(facefull-bridge VERSION 1.0.4 DESCRIPTION "Facefull bridge library")
 
 set(CMAKE_CXX_STANDARD 14)
 
