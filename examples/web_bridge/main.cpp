@@ -4,11 +4,13 @@
 int main(int argc, char *argv[]) {
     FacefullBridgeWeb bridge("../ui", 8080);
 
-    bridge.doEventAttach("doWindowReady", [](const std::string& data, FacefullBridgeWeb::WebResponser &response){
-        std::cout << "Page loaded" << std::endl;
+    bridge.doEventAttach("doWindowReady", [](const std::string &data, const std::string &address,
+        const FacefullBridgeWeb::WebRequester &request, FacefullBridgeWeb::WebResponser &response){
+        std::cout << "Page loaded, client IP address: " << address << std::endl;
     });
 
-    bridge.doEventAttach("getTestData", [](const std::string& data, FacefullBridgeWeb::WebResponser &response){
+    bridge.doEventAttach("getTestData", [](const std::string &data, const std::string &address,
+        const FacefullBridgeWeb::WebRequester &request, FacefullBridgeWeb::WebResponser &response){
         std::cout << "Got data '" << data << "'" << std::endl;
         doEventResponse("Test message");
     });
