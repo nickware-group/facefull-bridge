@@ -73,7 +73,7 @@ public:
 #endif
 
     void doEventAttach(const std::string &eventname, const WebEventHandler &function) const {
-        auto callback = [function](const WebRequester &req, WebResponser &res) {
+        auto callback = [function](const auto &req, auto &res) {
             function(req.body, req.get_header_value("REMOTE_ADDR"), req, res);
         };
 
