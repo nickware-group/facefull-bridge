@@ -43,7 +43,8 @@ private:
 public:
     typedef httplib::Request WebRequester;
     typedef httplib::Response WebResponser;
-    typedef std::function<void(const std::string &data, const std::string &address, const WebRequester &req, WebResponser &res)> WebEventHandler;
+    typedef std::function<void(const std::string &data, WebResponser &res)> WebEventHandler;
+    typedef std::function<void(const std::string &data, const std::string &address, const WebRequester &req, WebResponser &res)> WebEventHandlerEx;
     #define doEventResponse(data) {response.set_content(data, "application/json");}
 
     FacefullBridgeWeb(const std::string &path, int port, std::string address = "0.0.0.0") {
@@ -73,6 +74,17 @@ public:
 #endif
 
     void doEventAttach(const std::string &eventname, const WebEventHandler &function) const {
+        auto callback = [function](const auto &req, auto &res) {
+            function(req.body, res);
+        };
+
+        if (Srv) Srv -> Post("/bridge/"+eventname+"/", callback);
+#ifdef FB_BRIDGE_WEB_SECURE
+        else if (SrvSecure) SrvSecure -> Post("/bridge/"+eventname+"/", callback);
+#endif
+    }
+
+    void doEventAttach(const std::string &eventname, const WebEventHandlerEx &function) const {
         auto callback = [function](const auto &req, auto &res) {
             function(req.body, req.get_header_value("REMOTE_ADDR"), req, res);
         };
