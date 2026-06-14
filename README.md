@@ -6,13 +6,16 @@
 Facefull bridge is a communication system which connects application native backend (C++/Java/etc...) and Facefull user interface (runs through webview component). 
 This library allows you to use Facefull to create a user interface for native desktop applications using the webview component. In native mode you can use built-in event system to communicate with your native desktop application C++ backend.
 
-This library contains Facefull bridge interface and bridge implementation for wxWidgets (webview/webkit) and Qt5 (webkit) frameworks.
+This library contains Facefull bridge interface and bridge implementation for wxWidgets (webview/webkit), Qt5 (webkit) and Electron frameworks.
 You can use predefined implementations or create your own.
 
-A web bridge mode is also available. In this mode, the backend application runs an HTTP server and provides communication between the native C++ code and Facefull frontend via the bridge system.
+Available bridge modes:
+- `Native mode`. `Facefull UI` <---> `WebView component` <---> `native code` in one native app.
+- `Electron mode`. `Facefull UI` <---> `Electron app` <---> `native app`. In this mode, Facefull frontend communicates with Electron backend and native C++ app. The native application runs an HTTP server and provides communication between the native C++ code and Facefull frontend via the bridge system.
+- `Web mode`. `Facefull UI` <---> `browser` <---> `native app / server`. In this mode, the backend application runs an HTTP server and provides communication between the native C++ code and Facefull frontend via the bridge system.
 
 <p align="center">
-    <img width="820" height="640" src="https://nickware.group/repository/products/ff/scheme_full_en.png"><br><br>
+    <img width="820" height="940" src="https://nickware.group/repository/products/ff/scheme_full_en.png"><br><br>
 </p>
 
 
@@ -40,6 +43,14 @@ Supported OS:
 Supported OS:
 - Windows
 - Linux
+- MacOS
+
+#### 4. [Bridge for electron](examples/electron)
+
+Supported OS:
+- Windows
+- Linux
+- MacOS
 
 
 ----------------------------------------------------------------
@@ -48,5 +59,5 @@ All files will be in dist directory.
 #### Windows
 Just run build.cmd script.
 
-#### Linux
+#### Linux / MacOS
 Just run build.sh script.
