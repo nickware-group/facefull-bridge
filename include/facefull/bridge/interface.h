@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Name:
 // Purpose:
-// Author:      Nickolay Babbysh
+// Author:      Nickolay Babich
 // Created:     02.10.2021
 // Copyright:   (c) NickWare Group
 // Licence:     MIT licence
@@ -18,14 +18,13 @@ class FacefullBridgeInterface {
 public:
     typedef std::function<void(const std::string&)> EventHandler;
     FacefullBridgeInterface();
+
     void doEventAttach(const std::string &eventname, EventHandler function);
     virtual void doEventSend(const std::string &eventname, const std::string &data);
     bool isWindowReady() const;
-    void doEventCatch(const std::string&);
-    ~FacefullBridgeInterface() = default;
-private:
-    std::multimap<std::string, EventHandler> Events;
-    bool WindowReady;
+    virtual void doEventCatch(const std::string&);
+
+    virtual ~FacefullBridgeInterface() = default;
 protected:
     virtual void onWindowReady() = 0;
     virtual void onWindowMove() = 0;
@@ -33,6 +32,9 @@ protected:
     virtual void onWindowMinimize() = 0;
     virtual void onWindowClose() = 0;
     virtual void WebViewCommandExecutor(const std::string&) = 0;
+private:
+    std::multimap<std::string, EventHandler> Events;
+    bool WindowReady;
 };
 
 #endif //FACEFULL_BRIDGE_INTERFACE_H
