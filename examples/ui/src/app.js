@@ -2,12 +2,15 @@ let List1 = [];
 let List2 = [];
 let List3 = [];
 
-facefullCreate(true);
+let ElectronMode = false;
+let WebMode = false;
+
+facefullCreate();
 
 window.addEventListener('load', function () {
     // if it's not native window but the web page
     if (location.pathname === "/") {
-        facefull.setNative(false);
+        WebMode = true;
         document.getElementById("WH").classList.add("Hidden");
 
         facefull.doEventSend("getTestData", "request from frontend", {
@@ -59,7 +62,12 @@ function doFillDictionary() {
 }
 
 function App() {
-    facefull.doInit();
+    let mode = "native";
+    if (ElectronMode) mode = "electron";
+    else if (WebMode) mode = "web";
+
+    facefull.doInit({mode: mode, disable_context_menu: true});
+
     facefull.Locales.doAttachLocaleFile("English", ["src/locale-en.css"]);
     facefull.Locales.doAttachLocaleFile("Russian", ["src/locale-ru.css"]);
     facefull.Locales.doAttachLocaleFile("German", ["src/locale-de.css"]);

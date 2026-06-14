@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
         doEventResponse("Test message");
     });
 
-    std::cout << "Running facefull web bridge" << std::endl;
+    std::cout << "Running facefull web bridge (http://localhost:8080)" << std::endl;
     bridge.doRunServer();
 
     return 0;
